@@ -112,6 +112,8 @@ module TestBench;
 		// Wait 100 ns for global reset to finish
 		#340;
 		// Add stimulus here
+		
+		////////////////////// Management ///////////////////////////////
 		Manage=1;#100;
 		Manage=0;
 		#100;
@@ -120,6 +122,10 @@ module TestBench;
 		Confirm=0;#100;
 		Americano_price=0;Ratte_price=0;
 		#200;
+		/////////////////////////////////////////////////////////////////
+		
+		
+		////////////////////// Americano Request ////////////////////////
 		Coin100=1;#100;
 		Coin100=0;
 		#200;
@@ -145,11 +151,44 @@ module TestBench;
 		TakeOut=0;
 		#1000;
 		Return=1;#100;
+		Return=0;#1200;
+		/////////////////////////////////////////////////////////////////
+		
+		
+		////////////////////// Ratte request ////////////////////////////
+		Coin100=1;#100;
+		Coin100=0;
+		#200;
+		Coin100=1;#100;
+		Coin100=0;
+		#200;
+		Coin100=1;#100;
+		Coin100=0;
+		#200;
+		Coin100=1;#100;
+		Coin100=0;
+		#1100;
+		Ratte=1;#100;
+		Ratte=0;
+		#100;
+		Cup1=1;#100;
+		Cup1=0;
+		#200;
+		Start=1;#100;
+		Start=0;
+		#400;
+		Done = 1;#100;
+		Done = 0;
+		#200;
+		TakeOut=1;#100;
+		TakeOut=0;
+		#1000;
+		Return=1;#100;
 		Return=0;
+		/////////////////////////////////////////////////////////////////
 	end
 		always
 			begin
 				CLK=1'b0;#50;CLK=1'b1;#50;
 			end
 endmodule
-
