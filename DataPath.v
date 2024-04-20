@@ -146,7 +146,7 @@ module DataPath(
 			if(LD_MEM)
 				begin
 					MEM[0]<=americano_price;
-					//MEM[1]<=ratte_price;
+					MEM[1]<=ratte_price;
 				end
 		end
 	 
