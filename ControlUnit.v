@@ -27,17 +27,18 @@ module ControlUnit(
 	input Coin50,input Coin100,input Coin500,input Coin1000,
 	input Done,input TakeOut,	//from system
 	input Z,input Z2,input Exceed,input Ready,	//from Data Path
+	input SET_COFFEE_PRICES,
 	
 	output Making, output Coffee,
 	output DROP50, output DROP100, output DROP500, output DROP1000,
 	output RST, 
-	output LD_A,output LD_B,output LD_C,output LD_D,output LD_E,output LD_CNT,output LD_MEM,
+	output LD_A,output LD_B,output LD_C,output LD_D,output LD_E,output LD_CNT,output LD_MEM, output CHECK_ZERO,
 	output CD_D,output CD_CNT,
 	output Sel_DIV_IN,
 	output [1:0] Sel_A_IN,output [1:0] Sel_ADD_IN,output [1:0] Sel_DIVISOR,
 	output [1:0] Kind,output [2:0] Cups
     );
-	 reg RST,Making,Coffee,DROP50,DROP100,DROP500,DROP1000,LD_A,LD_B,LD_C,LD_D,LD_E, LD_CNT,LD_MEM, CD_CNT,CD_D, Sel_DIV_IN;
+	 reg RST,Making,Coffee,DROP50,DROP100,DROP500,DROP1000,LD_A,LD_B,LD_C,LD_D,LD_E, LD_CNT,LD_MEM,CHECK_ZERO, CD_CNT,CD_D, Sel_DIV_IN;	
 	 reg [1:0] Sel_A_IN, Sel_ADD_IN, Sel_DIVISOR, Kind;
 	 reg [2:0] Cups;
 	 reg [5:0] ActState, NextState;
@@ -72,10 +73,13 @@ module ControlUnit(
 	 parameter MAKE1 =6'd28;
 	 parameter MAKE2 =6'd29;
 	 parameter MAKE3 =6'd30;
+	 
 	 parameter MANAGE0 =6'd31;
-	 parameter MANAGE1 =6'd32;
-	 parameter EXCEED =6'd33;
-	 parameter MAKE0a =6'd34;
+	 parameter MANAGE1 =6'd32;	
+	 parameter MANAGE2 =6'd33;  
+	 
+	 parameter EXCEED =6'd34;
+	 parameter MAKE0a =6'd35;
 	 //next state logic
 	 always@(ActState or Start or Americano or Ratte or Exceed or Ready or Return or 
 		Manage or Confirm or Done or TakeOut or
@@ -158,11 +162,20 @@ module ControlUnit(
 					if(TakeOut) NextState = MAKE1;
 					else NextState = MAKE3;
 					end
+				
+				
 				MANAGE0 : begin
-					if(Confirm) NextState = MANAGE1;
+					if (Confirm) NextState = MANAGE1;			
 					else NextState = MANAGE0;
 					end
-				MANAGE1 : NextState = INIT;
+				//Checking that pricess are not set to 0. Otherwise free coffe
+				MANAGE1 : begin
+					if (SET_COFFEE_PRICES == 0) NextState = MANAGE2;
+					else NextState = MANAGE0;
+					end
+				MANAGE2 : NextState = INIT;	
+				
+				
 				default: NextState = INIT;
 			endcase
 		end
@@ -171,7 +184,7 @@ module ControlUnit(
 		begin
 			RST = 0; Kind = 0; Cups =0;
 			CD_CNT = 0; CD_D = 0;
-			LD_A = 0; LD_B = 0; LD_C = 0; LD_D = 0; LD_E = 0; LD_CNT = 0; LD_MEM = 0;
+			LD_A = 0; LD_B = 0; LD_C = 0; LD_D = 0; LD_E = 0; LD_CNT = 0; LD_MEM = 0; CHECK_ZERO = 0;
 			Sel_DIV_IN = 0;
 			Sel_A_IN = 0; Sel_ADD_IN = 0; Sel_DIVISOR = 0;
 			DROP1000 = 0; DROP500 = 0; DROP100 = 0; DROP50 = 0;
@@ -288,8 +301,10 @@ module ControlUnit(
 				MAKE1: CD_D = 1;
 				MAKE2: Making = 1;
 				MAKE3: Coffee = 1;
+				
 				MANAGE0: ;
-				MANAGE1: LD_MEM = 1;
+				MANAGE1: CHECK_ZERO = 1;         
+				MANAGE2: LD_MEM = 1;
 				default;
 			endcase
 		end
