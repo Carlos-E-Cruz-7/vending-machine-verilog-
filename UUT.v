@@ -26,28 +26,30 @@ module UUT(
 	 input Coin50,input Coin100,input Coin500,input Coin1000,
 	 input [6:0] Americano_price,input [6:0] Ratte_price,
 	  
+	 output Set_Coffee_Prices, 
 	 output Return50,output Return100,output Return500, output Return1000,
     output Making,output Coffee,
 	 output [6:0] Sum
 	 );
+	 wire Set_Coffee_Prices;
 	 wire Z,Z2,Exceed,Ready;
-	 wire LD_A,LD_B,LD_C,LD_D,LD_E,LD_CNT,LD_MEM,CD_D,CD_CNT,Sel_DIV_IN;
+	 wire LD_A,LD_B,LD_C,LD_D,LD_E,LD_CNT,LD_MEM,CD_D,CD_CNT,Sel_DIV_IN,CHECK_ZERO;	
 	 wire [1:0] Sel_A_IN,Sel_ADD_IN,Sel_DIVISOR,Kind;
 	 wire [2:0] Cups;
 	 DataPath datapath(CLK,RST,LD_A,LD_B,LD_C,LD_D,LD_E,LD_CNT,LD_MEM,
 							CD_D,CD_CNT,Sel_DIV_IN,Sel_A_IN,Sel_ADD_IN,Sel_DIVISOR,
-							Kind,Cups,Americano_price,Ratte_price,
+							Kind,Cups,Americano_price,Ratte_price, CHECK_ZERO,	
 							//out
-							Z,Z2,Exceed,Ready,Sum);
+							Z,Z2,Exceed,Ready,Sum,Set_Coffee_Prices);  
 	 ControlUnit controlunit(CLK, 
 									Start,Return,Manage,Confirm,
 									Americano,Ratte,
 									Cup1,Cup2,Cup3,Cup4,Cup5,
 									Coin50,Coin100,Coin500,Coin1000,Done, TakeOut,
-									Z,Z2,Exceed,Ready,
+									Z,Z2,Exceed,Ready,Set_Coffee_Prices,			
 									//out
 									Making,Coffee,Return50,Return100,Return500,Return1000,RST, 
-									LD_A,LD_B,LD_C,LD_D,LD_E,LD_CNT,LD_MEM,
+									LD_A,LD_B,LD_C,LD_D,LD_E,LD_CNT,LD_MEM,CHECK_ZERO,	
 									CD_D,CD_CNT,Sel_DIV_IN,Sel_A_IN,Sel_ADD_IN,Sel_DIVISOR,
 									Kind,Cups
 									);
