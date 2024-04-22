@@ -27,18 +27,21 @@ module DataPath(
 	 input [1:0] Kind,input [2:0] Cups,
 	 
 	 input [6:0] americano_price,input [6:0] ratte_price,
+	 input CHECK_ZERO,          
 	 
 	 output Z,
 	 output Z2,
 	 output exceed,
 	 output ready,
-	 output [6:0] A
+	 output [6:0] A,
+	 output set_coffee_prices           
 	 );
 	 reg enough;
 	 reg [1:0] C;
 	 reg [2:0] D;
 	 reg [6:0] A,B,E,CNT,ADD_IN,divisor,cost,sum,quotient,remainder,remain_money;
 	 reg [6:0] A_IN,MEM[1:0];
+	 reg set_coffee_prices;           
 	 wire [6:0]  DIV_IN;
 	 
 	 //MUX
@@ -149,5 +152,18 @@ module DataPath(
 					MEM[1]<=ratte_price;
 				end
 		end
+	 //Checking if pricess are zero            
+	 always @(CHECK_ZERO) 
+		begin
+			if (americano_price == 0 && ratte_price == 0)
+				set_coffee_prices = 1;
+			else if (americano_price == 0 && ratte_price > 0)
+				set_coffee_prices = 1;
+			else if (americano_price > 0 && ratte_price == 0)
+				set_coffee_prices = 1;		
+			else if (americano_price > 0 && ratte_price > 0)
+				set_coffee_prices = 0;
+		end
+
 	 
 endmodule
